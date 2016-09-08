@@ -1,0 +1,140 @@
+﻿<Window x:Class="StepperWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:bltools="clr-namespace:BLTools.WPF.Controls;assembly=BLTools.WPF.Controls.45"
+        xmlns:local="clr-namespace:StepperWpf"
+        mc:Ignorable="d"
+        Title="Stepper"
+        Height="350"
+        Width="525"
+        Initialized="Window_Initialized">
+  <Grid>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <Menu Grid.Row="0"
+            Height="23"
+            HorizontalAlignment="Stretch"
+            Name="mnuMain"
+            VerticalAlignment="Top">
+        <MenuItem Header="File"
+                  Name="mnuFile">
+          <MenuItem Name="mnuFileOpen"
+                    Header="Open"
+                    Command="{Binding Path=FileOpenCommand}" />
+          <MenuItem Name="mnuFileQuit"
+                    Header="Quit"
+                    Click="mnuFileQuit_Click" />
+        </MenuItem>
+        <MenuItem Header="View"
+                  Name="mnuView">
+
+        </MenuItem>
+        <MenuItem Header="Tools"
+                  Name="mnuTools">
+          <MenuItem Name="mnuToolsOptions"
+                    Header="Options">
+          </MenuItem>
+        </MenuItem>
+        <MenuItem Header="Help"
+                  Name="mnuHelp">
+          <MenuItem Name="mnuHelpContact"
+                    Header="Contact"
+                    Command="{Binding Path=HelpContactCommand}" />
+          <MenuItem Name="mnuHelpAbout"
+                    Header="About"
+                    Command="{Binding Path=HelpAboutCommand}" />
+        </MenuItem>
+
+      </Menu>
+
+      <Grid Grid.Row="1">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition />
+              <ColumnDefinition />
+              <ColumnDefinition />
+              <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0" Margin="10" VerticalAlignment="Center" IsEditable="True" >
+              <ComboBoxItem Content="Continuous" IsSelected="True"/>
+              <ComboBoxItem Content="200" />
+              <ComboBoxItem Content="400" />
+              <ComboBoxItem Content="800" />
+              <ComboBoxItem Content="1600" />
+              <ComboBoxItem Content="3200" />
+            </ComboBox>
+
+            <Button Grid.Column="1"
+                    Name="btnDirection"
+                    Margin="10"
+                    Content="Clockwise">
+            </Button>
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Vertical"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch">
+              <TextBlock Name="txtSpeed"
+                         Text="{Binding ElementName=SldSpeed,Path=Value}"
+                         HorizontalAlignment="Center" />
+              <Slider Name="SldSpeed"
+                      Minimum="0"
+                      Maximum="100"
+                      SmallChange="1"
+                      LargeChange="10"
+                      Margin="10" />
+
+            </StackPanel>
+
+            <Button Grid.Column="3"
+                    Name="btnStart"
+                    Margin="10"
+                    Content="Start">
+            </Button>
+
+          </Grid>
+
+
+          <Grid Grid.Row="1">
+
+          </Grid>
+
+
+          <Grid Grid.Row="2">
+
+          </Grid>
+        </Grid>
+
+
+
+
+
+
+
+
+        <StackPanel Orientation="Horizontal">
+
+        </StackPanel>
+      </Grid>
+
+
+      <bltools:ExtendedStatusBar x:Name="stsBar"
+                                 Grid.Row="2" />
+    </Grid>
+  </Grid>
+</Window>
