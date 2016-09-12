@@ -14,7 +14,7 @@ namespace StepperConsole {
 
       SplitArgs Args = new SplitArgs(args);
 
-      TraceFactory.AddTraceConsole();
+      //TraceFactory.AddTraceConsole();
       TraceFactory.AddTraceDefaultLogFilename();
 
       ApplicationInfo.ApplicationStart();
@@ -26,7 +26,9 @@ namespace StepperConsole {
     }
 
     public static async Task Test() {
-      MoveInfo TestMove = new MoveInfo(EDirection.Clockwise, 5);
+      MoveInfo TestMove = new MoveInfo(EDirection.CounterClockwise, 5);
+      await TestMove.Start();
+      TestMove = new MoveInfo(EDirection.Clockwise, 5);
       await TestMove.Start();
     }
   }

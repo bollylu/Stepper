@@ -29,13 +29,11 @@ namespace StepperLib {
     /// <returns></returns>
     public async Task Start() {
 
-      SerialCom MySerial = new SerialCom();
+      SerialCom MySerial = new SerialCom("COM3");
       MySerial.Open();
 
-      Trace.WriteLine("Enable ON");
       MySerial.SetActive(true);
-
-      Trace.WriteLine($"Set direction to {Direction.ToString()}");
+      
       MySerial.SetDirection(Direction);
 
       for (int i = 1; i <= Steps; i++) {
@@ -48,8 +46,11 @@ namespace StepperLib {
 
       }
 
+      MySerial.SetActive(false);
+
       MySerial.Close();
-      Trace.WriteLine("Enable OFF");
+      
+      
     }
   }
 }

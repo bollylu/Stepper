@@ -1,9 +1,11 @@
-﻿using System;
+﻿using BLTools;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace StepperLib {
@@ -47,6 +49,7 @@ namespace StepperLib {
 
     public void Close() {
       if (ComPort.IsOpen) {
+        ComPort.BaseStream.Flush();
         ComPort.Close();
         ComPort.Dispose();
         ComPort = null;
@@ -56,52 +59,65 @@ namespace StepperLib {
 
     public void SetDirection(EDirection direction) {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port");
+        Trace.WriteLine("No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened");
+        Trace.WriteLine("Com port is not opened", Severity.Error);
         return;
       }
 
       try {
-        ComPort.DtrEnable = (direction == EDirection.Clockwise);
+        Trace.WriteLine($"Set direction to {direction.ToString()}");
+        if (direction == EDirection.Clockwise) {
+          ComPort.Write("D");
+        } else {
+          ComPort.Write("d");
+        }
       } catch (Exception ex) {
-        Trace.WriteLine($"Unable to set direction {direction.ToString()} on com port {ComPortName} : {ex.Message}");
+        Trace.WriteLine($"Unable to set direction {direction.ToString()} on com port {ComPortName} : {ex.Message}", Severity.Error);
       }
     }
 
     public void SetActive(bool isActive) {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port");
+        Trace.WriteLine("No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened");
+        Trace.WriteLine("Com port is not opened", Severity.Error);
         return;
       }
 
       try {
-        ComPort.RtsEnable = isActive;
+        if (isActive) {
+          Trace.WriteLine("Enable ON");
+          ComPort.Write("E");
+        } else {
+          Trace.WriteLine("Enable OFF");
+          ComPort.Write("e");
+        }
       } catch (Exception ex) {
-        Trace.WriteLine($"Unable to set active to {isActive.ToString()} on com port {ComPortName} / {ex.Message}");
+        Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
       }
     }
 
     public void SendStep() {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port");
+        Trace.WriteLine("No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened");
+        Trace.WriteLine("Com port is not opened", Severity.Error);
         return;
       }
 
       try {
-        ComPort.Write("X");
+        ComPort.Write("C");
+        Thread.Sleep(250);
+        ComPort.Write("c");
       } catch (Exception ex) {
-        Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}");
+        Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
       }
     }
   }
