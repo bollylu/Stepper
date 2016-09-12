@@ -27,7 +27,7 @@ namespace StepperLib {
       foreach (MoveInfo MoveInfoItem in sequence.Items) {
         StepperSerialCom.SetDirection(MoveInfoItem.Direction);
 
-        for (int RepeatSteps = 1; RepeatSteps <= MoveInfoItem.RepeatMovement; RepeatSteps++) {
+        for (int RepeatSteps = 1; RepeatSteps <= MoveInfoItem.Iterations; RepeatSteps++) {
           for (int i = 1; i <= MoveInfoItem.Steps; i++) {
 
             Trace.WriteLine($"  Step {i}");
@@ -56,7 +56,7 @@ namespace StepperLib {
 
       StepperSerialCom.SetDirection(moveInfo.Direction);
 
-      for (int RepeatSteps = 1; RepeatSteps <= moveInfo.RepeatMovement; RepeatSteps++) {
+      for (int RepeatSteps = 1; RepeatSteps <= moveInfo.Iterations; RepeatSteps++) {
         for (int i = 1; i <= moveInfo.Steps; i++) {
 
           Trace.WriteLine($"  Step {i}");

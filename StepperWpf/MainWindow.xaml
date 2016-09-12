@@ -75,18 +75,20 @@
               <RowDefinition Height="auto" />
               <RowDefinition Height="auto" />
               <RowDefinition Height="*" />
+              <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <Border Background="Beige"
                     Grid.Row="0">
-              <TextBlock Text="Mouvement"
+              <TextBlock Text="Movement"
                          HorizontalAlignment="Center"
                          Margin="5" />
             </Border>
 
             <GroupBox Header="Steps"
                       Grid.Row="1"
-                      Margin="5">
+                      Margin="5"
+                      ToolTip="Number of steps to execute">
               <ComboBox Margin="10"
                         VerticalAlignment="Center"
                         IsEditable="True"
@@ -98,7 +100,8 @@
 
             <GroupBox Header="Direction"
                       Grid.Row="2"
-                      Margin="5">
+                      Margin="5"
+                      ToolTip="Direction for the movement">
               <StackPanel>
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center"
@@ -106,7 +109,9 @@
                   <Button Name="btnDirectionCW"
                           Margin="10"
                           Command="{Binding Path=ChangeDirectionCommand}"
-                          Height="48" BorderThickness="0" Background="White">
+                          Height="48"
+                          BorderThickness="0"
+                          Background="White">
                     <Image Source="{Binding Path=DisplayClockwisePicture}"
                            Height="{Binding ElementName=btnDirectionCW, Path=Height}"
                            VerticalAlignment="Center"
@@ -140,13 +145,14 @@
               </StackPanel>
             </GroupBox>
 
-            <GroupBox Header="Speed" 
+            <GroupBox Header="Speed"
                       Grid.Row="3"
                       Margin="5">
               <StackPanel Grid.Row="3"
                           Orientation="Vertical"
                           VerticalAlignment="Center"
-                          HorizontalAlignment="Stretch">
+                          HorizontalAlignment="Stretch"
+                          ToolTip="Speed at which the steps are sent (steps/second)">
                 <TextBlock Name="txtSpeed"
                            Text="{Binding ElementName=SldSpeed,Path=Value}"
                            HorizontalAlignment="Center" />
@@ -163,20 +169,26 @@
 
             <GroupBox Header="Repeat"
                       Grid.Row="4"
-                      Margin="5">
+                      Margin="5"
+                      ToolTip="Number of times to repeat the movement">
               <Grid>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBox Name="txtRepeat"
                          Text="{Binding Path=Iterations}"
-                         HorizontalContentAlignment="Center" BorderThickness="0" Margin="5" />
+                         HorizontalContentAlignment="Center"
+                         BorderThickness="0"
+                         Margin="5" />
               </Grid>
             </GroupBox>
 
             <Button Name="btnAddToList"
-                    Grid.Row="5"
-                    Margin="10">Add To list</Button>
+                    Grid.Row="6"
+                    Margin="10"
+                    IsEnabled="{Binding Path=IsMovementValid}"
+                    ToolTip="Add the movement to the end of sequence"
+                    Command="{Binding Path=AddToListCommand}">Add To list</Button>
 
           </Grid>
 
@@ -197,6 +209,31 @@
                          HorizontalAlignment="Center"
                          Margin="5" />
             </Border>
+
+            <ScrollViewer Grid.Row="1"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{Binding Path=Sequence}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            Margin="5"
+                            >
+                <DataTemplate>
+                  <StackPanel>
+                    <TextBlock Text="{Binding Path=Steps}" />
+                    <TextBlock Text=" / " />
+                    <TextBlock Text="{Binding Path=Direction}" />
+                    <TextBlock Text=" / " />
+                    <TextBlock Text="{Binding Path=Speed}" />
+                    <TextBlock Text=" / " />
+                    <TextBlock Text="{Binding Path=Iterations}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+            
+
             <Button Grid.Row="2"
                     Name="btnStart"
                     Margin="10"
