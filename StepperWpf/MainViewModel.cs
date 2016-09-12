@@ -10,9 +10,12 @@ using StepperLib;
 namespace StepperWpf {
   public class MainViewModel : MVVMBase {
 
+    #region --- Steps --------------------------------------------
     public ObservableCollection<TStepDisplay> Steps { get; protected set; } = new ObservableCollection<TStepDisplay>();
-    public TStepDisplay SelectedStep { get; set; }
+    public TStepDisplay SelectedStep { get; set; } 
+    #endregion --- Steps --------------------------------------------
 
+    #region --- Direction --------------------------------------------
     public EDirection Direction {
       get {
         return _Direction;
@@ -54,8 +57,30 @@ namespace StepperWpf {
         return App.GetPictureFullname("ccw");
       }
     }
-    public TRelayCommand ChangeDirectionCommand { get; private set; }
+    public TRelayCommand ChangeDirectionCommand { get; private set; } 
+    #endregion --- Direction --------------------------------------------
 
+    public int Speed {
+      get {
+        return _Speed;
+      }
+      set {
+        _Speed = value;
+        NotifyPropertyChanged(nameof(Speed));
+      }
+    }
+    private int _Speed;
+
+    public int Iterations {
+      get {
+        return _Iterations;
+      }
+      set {
+        _Iterations = value;
+        NotifyPropertyChanged(nameof(Iterations));
+      }
+    }
+    private int _Iterations;
 
     public MainViewModel() {
       _Initialize();
@@ -70,6 +95,8 @@ namespace StepperWpf {
       Steps.Add(new TStepDisplay() { StepValue = 6400, StepDescription = "6400 (1/32)" });
       SelectedStep = Steps.First();
       ChangeDirectionCommand = new TRelayCommand(() => ChangeDirectionCmd(), _ => { return true; });
+      Speed = 100;
+      Iterations = 1;
     }
 
     private void ChangeDirectionCmd() {

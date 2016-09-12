@@ -7,14 +7,16 @@
         xmlns:local="clr-namespace:StepperWpf"
         mc:Ignorable="d"
         Title="Stepper"
-        Height="350"
-        Width="525"
+        Height="600"
+        Width="800"
         Initialized="Window_Initialized">
   <Grid>
     <Grid.Resources>
       <BooleanToVisibilityConverter x:Key="BtoV" />
+      <local:MainViewModel x:Key="FakeViewModel" />
     </Grid.Resources>
-    <Grid>
+
+    <Grid d:DataContext="{Binding Source={StaticResource FakeViewModel}}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
@@ -82,55 +84,60 @@
                          Margin="5" />
             </Border>
 
-            <ComboBox Grid.Row="1"
-                      Margin="10"
-                      VerticalAlignment="Center"
-                      IsEditable="True"
-                      ItemsSource="{Binding Path=Steps}"
-                      DisplayMemberPath="StepDescription"
-                      SelectedValuePath="StepValue"
-                      SelectedItem="{Binding Path=SelectedStep}" />
-
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Left"
+            <GroupBox Header="Steps"
+                      Grid.Row="1" Margin="5">
+              <ComboBox Margin="10"
                         VerticalAlignment="Center"
-                        Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
-              <Button Name="btnDirectionCW"
-                      Margin="10"
-                      Command="{Binding Path=ChangeDirectionCommand}"
-                      Height="48">
-                <Image Source="{Binding Path=DisplayClockwisePicture}"
-                       Height="48"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center" SnapsToDevicePixels="True"  Stretch="Uniform"/>
+                        IsEditable="True"
+                        ItemsSource="{Binding Path=Steps}"
+                        DisplayMemberPath="StepDescription"
+                        SelectedValuePath="StepValue"
+                        SelectedItem="{Binding Path=SelectedStep}" />
+            </GroupBox>
 
-              </Button>
-              <TextBlock Text="CW"
-                         Margin="5,0,0,0"
-                         VerticalAlignment="Center" />
-            </StackPanel>
+            <GroupBox Header="Direction"
+                      Grid.Row="2" Margin="5">
+              <StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
+                  <Button Name="btnDirectionCW"
+                          Margin="10"
+                          Command="{Binding Path=ChangeDirectionCommand}"
+                          Height="48">
+                    <Image Source="{Binding Path=DisplayClockwisePicture}"
+                           Height="48"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           SnapsToDevicePixels="True"
+                           Stretch="Uniform" />
 
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
-              <Button Name="btnDirectionCCW"
-                      Margin="10"
-                      Command="{Binding Path=ChangeDirectionCommand}"
-                      Height="48"
-                      >
-                <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
-                       Height="48"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center" />
-              </Button>
-              <TextBlock Text="CCW"
-                         Margin="5,0,0,0"
-                         VerticalAlignment="Center" />
-            </StackPanel>
+                  </Button>
+                  <TextBlock Text="CW"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Center" />
+                </StackPanel>
 
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
+                  <Button Name="btnDirectionCCW"
+                          Margin="10"
+                          Command="{Binding Path=ChangeDirectionCommand}"
+                          Height="48">
+                    <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
+                           Height="48"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" />
+                  </Button>
+                  <TextBlock Text="CCW"
+                             Margin="5,0,0,0"
+                             VerticalAlignment="Center" />
+                </StackPanel>
+              </StackPanel>
+            </GroupBox>
             <GroupBox Grid.Row="3"
                       Header="Speed"
                       Margin="5">
@@ -146,22 +153,24 @@
                         Maximum="100"
                         SmallChange="1"
                         LargeChange="10"
-                        Margin="10" />
+                        Margin="10"
+                        Value="{Binding Path=Speed}" />
 
               </StackPanel>
             </GroupBox>
 
             <GroupBox Header="Repeat"
-                      Grid.Row="4">
+                      Grid.Row="4" Margin="5">
               <Grid>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBox Name="txtRepeat"
-                         HorizontalAlignment="Stretch"
-                         Grid.Row="0" />
+                         Text="{Binding Path=Iterations}"
+                         HorizontalContentAlignment="Center" />
               </Grid>
             </GroupBox>
+
             <Button Name="btnAddToList"
                     Grid.Row="5"
                     Margin="10">Add To list</Button>
