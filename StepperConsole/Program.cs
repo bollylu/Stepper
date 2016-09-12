@@ -29,12 +29,12 @@ namespace StepperConsole {
       Stepper CurrentStepper = new Stepper("COM3");
 
       MoveInfoCollection MySequence = new MoveInfoCollection();
-      MySequence.AddItem(new MoveInfo(EDirection.CounterClockwise, 5, 100, 2));
+      MySequence.AddItem(new MoveInfo(EDirection.CounterClockwise, 5, 100));
       MySequence.AddItem(new MoveInfo(EDirection.Clockwise, 5, 100));
 
       Task.Run(() => CurrentStepper.Execute(MySequence)).Wait();
 
-      Task.Run(() => CurrentStepper.Execute(new MoveInfo(EDirection.Clockwise, 5, 100))).Wait();
+      //Task.Run(() => CurrentStepper.Execute(new MoveInfo(EDirection.Clockwise, 5, 100))).Wait();
     }
   }
 }

@@ -49,12 +49,12 @@ namespace StepperWpf {
 
     public string DisplayClockwisePicture {
       get {
-        return App.GetPictureFullname("cw");
+        return App.GetPictureFullname("cw-color");
       }
     }
     public string DisplayCounterClockwisePicture {
       get {
-        return App.GetPictureFullname("ccw");
+        return App.GetPictureFullname("ccw-color");
       }
     }
     public TRelayCommand ChangeDirectionCommand { get; private set; } 
@@ -95,7 +95,7 @@ namespace StepperWpf {
       Steps.Add(new TStepDisplay() { StepValue = 6400, StepDescription = "6400 (1/32)" });
       SelectedStep = Steps.First();
       ChangeDirectionCommand = new TRelayCommand(() => ChangeDirectionCmd(), _ => { return true; });
-      Speed = 100;
+      Speed = 50;
       Iterations = 1;
     }
 

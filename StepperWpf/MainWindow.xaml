@@ -85,7 +85,8 @@
             </Border>
 
             <GroupBox Header="Steps"
-                      Grid.Row="1" Margin="5">
+                      Grid.Row="1"
+                      Margin="5">
               <ComboBox Margin="10"
                         VerticalAlignment="Center"
                         IsEditable="True"
@@ -96,23 +97,21 @@
             </GroupBox>
 
             <GroupBox Header="Direction"
-                      Grid.Row="2" Margin="5">
+                      Grid.Row="2"
+                      Margin="5">
               <StackPanel>
                 <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
                   <Button Name="btnDirectionCW"
                           Margin="10"
                           Command="{Binding Path=ChangeDirectionCommand}"
-                          Height="48">
+                          Height="48" BorderThickness="0" Background="White">
                     <Image Source="{Binding Path=DisplayClockwisePicture}"
-                           Height="48"
+                           Height="{Binding ElementName=btnDirectionCW, Path=Height}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           SnapsToDevicePixels="True"
-                           Stretch="Uniform" />
-
+                           SnapsToDevicePixels="True" />
                   </Button>
                   <TextBlock Text="CW"
                              Margin="5,0,0,0"
@@ -120,17 +119,19 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
                   <Button Name="btnDirectionCCW"
                           Margin="10"
                           Command="{Binding Path=ChangeDirectionCommand}"
-                          Height="48">
+                          Height="48"
+                          BorderThickness="0"
+                          Background="White">
                     <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
-                           Height="48"
+                           Height="{Binding ElementName=btnDirectionCCW, Path=Height}"
                            VerticalAlignment="Center"
-                           HorizontalAlignment="Center" />
+                           HorizontalAlignment="Center"
+                           SnapsToDevicePixels="True" />
                   </Button>
                   <TextBlock Text="CCW"
                              Margin="5,0,0,0"
@@ -138,8 +139,9 @@
                 </StackPanel>
               </StackPanel>
             </GroupBox>
-            <GroupBox Grid.Row="3"
-                      Header="Speed"
+
+            <GroupBox Header="Speed" 
+                      Grid.Row="3"
                       Margin="5">
               <StackPanel Grid.Row="3"
                           Orientation="Vertical"
@@ -160,14 +162,15 @@
             </GroupBox>
 
             <GroupBox Header="Repeat"
-                      Grid.Row="4" Margin="5">
+                      Grid.Row="4"
+                      Margin="5">
               <Grid>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBox Name="txtRepeat"
                          Text="{Binding Path=Iterations}"
-                         HorizontalContentAlignment="Center" />
+                         HorizontalContentAlignment="Center" BorderThickness="0" Margin="5" />
               </Grid>
             </GroupBox>
 
