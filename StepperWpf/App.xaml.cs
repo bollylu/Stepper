@@ -24,5 +24,9 @@ namespace StepperWpf {
     private void Application_Exit(object sender, ExitEventArgs e) {
       ApplicationInfo.ApplicationStop();
     }
+
+    public static string GetPictureFullname(string name = "default") {
+      return string.Format("/StepperWpf;component/Pictures/{0}.png", name);
+    }
   }
 }

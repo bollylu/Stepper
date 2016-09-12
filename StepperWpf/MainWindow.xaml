@@ -11,6 +11,9 @@
         Width="525"
         Initialized="Window_Initialized">
   <Grid>
+    <Grid.Resources>
+      <BooleanToVisibilityConverter x:Key="BtoV" />
+    </Grid.Resources>
     <Grid>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
@@ -56,67 +59,137 @@
 
       <Grid Grid.Row="1">
         <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+          </Grid.ColumnDefinitions>
 
-          <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition />
-              <ColumnDefinition />
-              <ColumnDefinition />
-              <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+          <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <ComboBox Grid.Column="0" Margin="10" VerticalAlignment="Center" IsEditable="True" >
-              <ComboBoxItem Content="Continuous" IsSelected="True"/>
-              <ComboBoxItem Content="200" />
-              <ComboBoxItem Content="400" />
-              <ComboBoxItem Content="800" />
-              <ComboBoxItem Content="1600" />
-              <ComboBoxItem Content="3200" />
-            </ComboBox>
+            <Border Background="Beige"
+                    Grid.Row="0">
+              <TextBlock Text="Mouvement"
+                         HorizontalAlignment="Center"
+                         Margin="5" />
+            </Border>
 
-            <Button Grid.Column="1"
-                    Name="btnDirection"
-                    Margin="10"
-                    Content="Clockwise">
-            </Button>
+            <ComboBox Grid.Row="1"
+                      Margin="10"
+                      VerticalAlignment="Center"
+                      IsEditable="True"
+                      ItemsSource="{Binding Path=Steps}"
+                      DisplayMemberPath="StepDescription"
+                      SelectedValuePath="StepValue"
+                      SelectedItem="{Binding Path=SelectedStep}" />
 
-            <StackPanel Grid.Column="2"
-                        Orientation="Vertical"
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        HorizontalAlignment="Stretch">
-              <TextBlock Name="txtSpeed"
-                         Text="{Binding ElementName=SldSpeed,Path=Value}"
-                         HorizontalAlignment="Center" />
-              <Slider Name="SldSpeed"
-                      Minimum="0"
-                      Maximum="100"
-                      SmallChange="1"
-                      LargeChange="10"
-                      Margin="10" />
+                        Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
+              <Button Name="btnDirectionCW"
+                      Margin="10"
+                      Command="{Binding Path=ChangeDirectionCommand}"
+                      Height="48">
+                <Image Source="{Binding Path=DisplayClockwisePicture}"
+                       Height="48"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" SnapsToDevicePixels="True"  Stretch="Uniform"/>
 
+              </Button>
+              <TextBlock Text="CW"
+                         Margin="5,0,0,0"
+                         VerticalAlignment="Center" />
             </StackPanel>
 
-            <Button Grid.Column="3"
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
+              <Button Name="btnDirectionCCW"
+                      Margin="10"
+                      Command="{Binding Path=ChangeDirectionCommand}"
+                      Height="48"
+                      >
+                <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
+                       Height="48"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+              </Button>
+              <TextBlock Text="CCW"
+                         Margin="5,0,0,0"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+
+            <GroupBox Grid.Row="3"
+                      Header="Speed"
+                      Margin="5">
+              <StackPanel Grid.Row="3"
+                          Orientation="Vertical"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch">
+                <TextBlock Name="txtSpeed"
+                           Text="{Binding ElementName=SldSpeed,Path=Value}"
+                           HorizontalAlignment="Center" />
+                <Slider Name="SldSpeed"
+                        Minimum="0"
+                        Maximum="100"
+                        SmallChange="1"
+                        LargeChange="10"
+                        Margin="10" />
+
+              </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Repeat"
+                      Grid.Row="4">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Name="txtRepeat"
+                         HorizontalAlignment="Stretch"
+                         Grid.Row="0" />
+              </Grid>
+            </GroupBox>
+            <Button Name="btnAddToList"
+                    Grid.Row="5"
+                    Margin="10">Add To list</Button>
+
+          </Grid>
+
+
+          <Grid Grid.Column="1">
+
+          </Grid>
+
+
+          <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="auto" />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Border Background="Beige">
+              <TextBlock Text="Séquence"
+                         HorizontalAlignment="Center"
+                         Margin="5" />
+            </Border>
+            <Button Grid.Row="2"
                     Name="btnStart"
                     Margin="10"
                     Content="Start">
             </Button>
-
-          </Grid>
-
-
-          <Grid Grid.Row="1">
-
-          </Grid>
-
-
-          <Grid Grid.Row="2">
-
           </Grid>
         </Grid>
 

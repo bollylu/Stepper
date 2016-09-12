@@ -1,0 +1,77 @@
+﻿using BLTools;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StepperLib {
+  public class Stepper {
+
+    public SerialCom StepperSerialCom { get; set; }
+
+    public Stepper(string serialComPort) {
+      StepperSerialCom = new SerialCom(serialComPort);
+    }
+
+    public async Task Execute(MoveInfoCollection sequence) {
+      if (sequence == null || sequence.Items.Count()==0) {
+        Trace.WriteLine("Unable to execute sequence when it's null or items are empty", Severity.Error);
+        return;
+      }
+
+      StepperSerialCom.Open();
+      StepperSerialCom.SetActive(true);
+
+      foreach (MoveInfo MoveInfoItem in sequence.Items) {
+        StepperSerialCom.SetDirection(MoveInfoItem.Direction);
+
+        for (int RepeatSteps = 1; RepeatSteps <= MoveInfoItem.RepeatMovement; RepeatSteps++) {
+          for (int i = 1; i <= MoveInfoItem.Steps; i++) {
+
+            Trace.WriteLine($"  Step {i}");
+            StepperSerialCom.SendStep();
+
+            Trace.WriteLine($"  == Waiting for {MoveInfoItem.GapBetweenSteps}");
+            await Task.Delay(TimeSpan.FromMilliseconds(MoveInfoItem.GapBetweenSteps));
+
+          }
+        }
+      }
+
+      StepperSerialCom.SetActive(false);
+      StepperSerialCom.Close();
+    }
+
+    public async Task Execute(MoveInfo moveInfo) {
+
+      if (moveInfo == null) {
+        Trace.WriteLine("Unable to execute moveInfo when it's null", Severity.Error);
+        return;
+      }
+
+      StepperSerialCom.Open();
+      StepperSerialCom.SetActive(true);
+
+      StepperSerialCom.SetDirection(moveInfo.Direction);
+
+      for (int RepeatSteps = 1; RepeatSteps <= moveInfo.RepeatMovement; RepeatSteps++) {
+        for (int i = 1; i <= moveInfo.Steps; i++) {
+
+          Trace.WriteLine($"  Step {i}");
+          StepperSerialCom.SendStep();
+
+          Trace.WriteLine($"  == Waiting for {moveInfo.GapBetweenSteps}");
+          await Task.Delay(TimeSpan.FromMilliseconds(moveInfo.GapBetweenSteps));
+
+        }
+      }
+
+      StepperSerialCom.SetActive(false);
+      StepperSerialCom.Close();
+
+    }
+
+  }
+}

@@ -31,6 +31,7 @@ namespace StepperLib {
     #endregion Constructor(s)
 
     public void Open() {
+      Trace.WriteLine($"Opening com port {ComPortName} ...");
       if (ComPort == null) {
         ComPort = new SerialPort(ComPortName, ComPortSpeed, ComPortParity, ComPortDataBits, ComPortStopBits);
       }
@@ -48,6 +49,7 @@ namespace StepperLib {
     }
 
     public void Close() {
+      Trace.WriteLine("Closing com port...");
       if (ComPort.IsOpen) {
         ComPort.BaseStream.Flush();
         ComPort.Close();

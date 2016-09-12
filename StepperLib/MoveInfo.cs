@@ -10,6 +10,15 @@ namespace StepperLib {
     public EDirection Direction { get; set; }
     public int Steps { get; set; }
     public long GapBetweenSteps { get; set; }
+    public int RepeatMovement { get; set; }
+
+
+    public MoveInfo() {
+      Direction = EDirection.Clockwise;
+      Steps = 0;
+      GapBetweenSteps = 0;
+      RepeatMovement = 0;
+    }
 
     /// <summary>
     /// Defines how to move
@@ -17,40 +26,13 @@ namespace StepperLib {
     /// <param name="direction">Direction of the move</param>
     /// <param name="steps">Number of steps</param>
     /// <param name="gapBetweenSteps">How long to wait between each individual step</param>
-    public MoveInfo(EDirection direction, int steps, long gapBetweenSteps = 100) {
+    public MoveInfo(EDirection direction, int steps, long gapBetweenSteps = 100, int repeatMovement = 1) {
       Direction = direction;
       Steps = steps;
       GapBetweenSteps = gapBetweenSteps;
+      RepeatMovement = repeatMovement;
     }
 
-    /// <summary>
-    /// Starts a movement
-    /// </summary>
-    /// <returns></returns>
-    public async Task Start() {
-
-      SerialCom MySerial = new SerialCom("COM3");
-      MySerial.Open();
-
-      MySerial.SetActive(true);
-      
-      MySerial.SetDirection(Direction);
-
-      for (int i = 1; i <= Steps; i++) {
-
-        Trace.WriteLine($"  Step {i}");
-        MySerial.SendStep();
-
-        Trace.WriteLine($"  == Waiting for {GapBetweenSteps}");
-        await Task.Delay(TimeSpan.FromMilliseconds(GapBetweenSteps));
-
-      }
-
-      MySerial.SetActive(false);
-
-      MySerial.Close();
-      
-      
-    }
+    
   }
 }

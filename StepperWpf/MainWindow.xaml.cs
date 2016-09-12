@@ -39,6 +39,7 @@ namespace StepperWpf {
     #endregion Menu
 
     private void Window_Initialized(object sender, EventArgs e) {
+      MainItem = new MainViewModel();
       this.DataContext = MainItem;
     }
   }

@@ -19,17 +19,22 @@ namespace StepperConsole {
 
       ApplicationInfo.ApplicationStart();
 
-      Task.Run(() => Test()).Wait();
+      Test();
 
       ConsoleExtension.Pause();
       ApplicationInfo.ApplicationStop();
     }
 
-    public static async Task Test() {
-      MoveInfo TestMove = new MoveInfo(EDirection.CounterClockwise, 5);
-      await TestMove.Start();
-      TestMove = new MoveInfo(EDirection.Clockwise, 5);
-      await TestMove.Start();
+    public static void Test() {
+      Stepper CurrentStepper = new Stepper("COM3");
+
+      MoveInfoCollection MySequence = new MoveInfoCollection();
+      MySequence.AddItem(new MoveInfo(EDirection.CounterClockwise, 5, 100, 2));
+      MySequence.AddItem(new MoveInfo(EDirection.Clockwise, 5, 100));
+
+      Task.Run(() => CurrentStepper.Execute(MySequence)).Wait();
+
+      Task.Run(() => CurrentStepper.Execute(new MoveInfo(EDirection.Clockwise, 5, 100))).Wait();
     }
   }
 }
