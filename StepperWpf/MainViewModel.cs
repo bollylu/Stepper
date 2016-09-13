@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 using BLTools.MVVM;
 using System.Collections.ObjectModel;
 using StepperLib;
+using System.Windows;
 
 namespace StepperWpf {
   public class MainViewModel : MVVMBase {
 
-    #region --- Steps --------------------------------------------
-    public ObservableCollection<TStepDisplay> Steps { get; protected set; } = new ObservableCollection<TStepDisplay>();
-    public TStepDisplay SelectedStep {
+    #region --- MicroSteps --------------------------------------------
+    public ObservableCollection<TStepDisplay> MicroSteps { get; protected set; } = new ObservableCollection<TStepDisplay>();
+    public TStepDisplay SelectedMicroStep {
       get {
-        return _SelectedStep;
+        return _SelectedMicroStep;
       }
       set {
-        _SelectedStep = value;
-        NotifyPropertyChanged(nameof(SelectedStep));
+        _SelectedMicroStep = value;
+        NotifyPropertyChanged(nameof(SelectedMicroStep));
         NotifyPropertyChanged(nameof(IsMovementValid));
       }
     }
-    private TStepDisplay _SelectedStep;
-    public TRelayCommand AddToListCommand { get; private set; }
-    #endregion --- Steps --------------------------------------------
+    private TStepDisplay _SelectedMicroStep;
+    #endregion --- MicroSteps --------------------------------------------
 
     #region --- Direction --------------------------------------------
     public EDirection Direction {
@@ -59,7 +59,7 @@ namespace StepperWpf {
     }
     public string DirectionText {
       get {
-        if (Direction==EDirection.Clockwise) {
+        if (Direction == EDirection.Clockwise) {
           return "CW";
         } else {
           return "CCW";
@@ -105,7 +105,7 @@ namespace StepperWpf {
 
     public bool IsMovementValid {
       get {
-        if (SelectedStep == null) {
+        if (SelectedMicroStep == null) {
           return false;
         }
 
@@ -121,8 +121,8 @@ namespace StepperWpf {
       }
     }
 
-    public ObservableCollection<MoveInfo> Sequence { get; set; } = new ObservableCollection<MoveInfo>();
-    public MoveInfo SelectedMoveInfo {
+    public ObservableCollection<MoveInfoVM> Sequence { get; set; } = new ObservableCollection<MoveInfoVM>();
+    public MoveInfoVM SelectedMoveInfo {
       get {
         return _SelectedMoveInfo;
       }
@@ -131,29 +131,44 @@ namespace StepperWpf {
         NotifyPropertyChanged(nameof(SelectedMoveInfo));
       }
     }
-    private MoveInfo _SelectedMoveInfo;
+    private MoveInfoVM _SelectedMoveInfo;
+
+    public TRelayCommand AddToListCommand { get; private set; }
+    public TRelayCommand FileOpenCommand { get; private set; }
+    public TRelayCommand HelpContactCommand { get; private set; }
+    public TRelayCommand HelpAboutCommand { get; private set; }
+    public TRelayCommand<int> RemoveMovementCommand { get; private set; }
+    public TRelayCommand<int> MovementUpCommand { get; private set; }
+    public TRelayCommand<int> MovementDownCommand { get; private set; }
 
     public MainViewModel() {
       _Initialize();
     }
 
     protected void _Initialize() {
-      Steps.Clear();
-      Steps.Add(new TStepDisplay() { StepValue = 200, StepDescription = "200 (1)" });
-      Steps.Add(new TStepDisplay() { StepValue = 400, StepDescription = "400 (1/2)" });
-      Steps.Add(new TStepDisplay() { StepValue = 800, StepDescription = "800 (1/4)" });
-      Steps.Add(new TStepDisplay() { StepValue = 1600, StepDescription = "1600 (1/8)" });
-      Steps.Add(new TStepDisplay() { StepValue = 3200, StepDescription = "3200 (1/16)" });
-      Steps.Add(new TStepDisplay() { StepValue = 6400, StepDescription = "6400 (1/32)" });
-      SelectedStep = Steps.First();
-      ChangeDirectionCommand = new TRelayCommand(() => ChangeDirectionCmd(), _ => { return true; });
-      AddToListCommand = new TRelayCommand(() => AddToListCmd(), _ => { return true; });
+      FileOpenCommand = new TRelayCommand(() => _FileOpenCommand(), _ => { return true; });
+      HelpContactCommand = new TRelayCommand(() => _HelpContactCommand(), _ => { return true; });
+      HelpAboutCommand = new TRelayCommand(() => _HelpAboutCommand(), _ => { return true; });
+      MicroSteps.Clear();
+      MicroSteps.Add(new TStepDisplay() { StepValue = 200, StepDescription = "200 (1)" });
+      MicroSteps.Add(new TStepDisplay() { StepValue = 400, StepDescription = "400 (1/2)" });
+      MicroSteps.Add(new TStepDisplay() { StepValue = 800, StepDescription = "800 (1/4)" });
+      MicroSteps.Add(new TStepDisplay() { StepValue = 1600, StepDescription = "1600 (1/8)" });
+      MicroSteps.Add(new TStepDisplay() { StepValue = 3200, StepDescription = "3200 (1/16)" });
+      MicroSteps.Add(new TStepDisplay() { StepValue = 6400, StepDescription = "6400 (1/32)" });
+      SelectedMicroStep = MicroSteps.First();
+      ChangeDirectionCommand = new TRelayCommand(() => _ChangeDirectionCommand(), _ => { return true; });
+      AddToListCommand = new TRelayCommand(() => _AddToListCommand(), _ => { return IsMovementValid; });
+      RemoveMovementCommand = new TRelayCommand<int>((x) => _RemoveMovementCommand(x), _ => { return Sequence.Count > 0; });
+      MovementUpCommand = new TRelayCommand<int>((x) => _MovementUpCommand(x), _ => { return Sequence.Count > 1; });
+      MovementDownCommand = new TRelayCommand<int>((x) => _MovementDownCommand(x), _ => { return Sequence.Count > 1; });
       Speed = 50;
-      Iterations = 0;
+      Iterations = 1;
       Sequence.Clear();
     }
 
-    private void ChangeDirectionCmd() {
+
+    private void _ChangeDirectionCommand() {
       if (Direction == EDirection.Clockwise) {
         Direction = EDirection.CounterClockwise;
       } else {
@@ -161,12 +176,46 @@ namespace StepperWpf {
       }
     }
 
-    private void AddToListCmd() {
+    private void _AddToListCommand() {
       if (!IsMovementValid) {
         return;
       }
-      MoveInfo NewMoveInfo = new MoveInfo(Direction, SelectedStep.StepValue, Speed, Iterations);
+      MoveInfoVM NewMoveInfo = new MoveInfoVM(new MoveInfo(Direction, SelectedMicroStep.StepValue, Speed, Speed, Iterations));
+      int LastId = Sequence.Count == 0 ? 0 : Sequence.OrderBy(x => x.Id).Last().Id;
+      NewMoveInfo.Id = LastId + 1;
       Sequence.Add(NewMoveInfo);
+    }
+
+    private void _RemoveMovementCommand(int id) {
+      List<MoveInfoVM> IterationList = new List<MoveInfoVM>(Sequence);
+      Sequence.RemoveAt(IterationList.FindIndex(x => x.Id == id));
+      for (int i = 1; i <= Sequence.Count; i++) {
+        Sequence[i - 1].Id = i;
+      }
+    }
+
+    private void _MovementUpCommand(int id) {
+      if (id == 1) {
+        return;
+      }
+      Sequence[id - 1].Id = Sequence[id - 2].Id;
+      Sequence[id - 2].Id = Sequence[id - 2].Id + 1;
+      NotifyPropertyChanged(nameof(Sequence));
+    }
+
+    private void _MovementDownCommand(int id) {
+      if (id == Sequence.Count) {
+        return;
+      }
+      Sequence[id - 1].Id = Sequence[id].Id;
+      Sequence[id].Id = Sequence[id].Id -1;
+      NotifyPropertyChanged(nameof(Sequence));
+    }
+
+    private void _FileOpenCommand() { }
+    private void _HelpContactCommand() { }
+    private void _HelpAboutCommand() {
+      MessageBox.Show("Stepper v0.1");
     }
 
   }

@@ -14,6 +14,7 @@
     <Grid.Resources>
       <BooleanToVisibilityConverter x:Key="BtoV" />
       <local:MainViewModel x:Key="FakeViewModel" />
+      <local:MoveInfoVM x:Key="FakeMoveInfo" />
     </Grid.Resources>
 
     <Grid d:DataContext="{Binding Source={StaticResource FakeViewModel}}">
@@ -92,10 +93,10 @@
               <ComboBox Margin="10"
                         VerticalAlignment="Center"
                         IsEditable="True"
-                        ItemsSource="{Binding Path=Steps}"
+                        ItemsSource="{Binding Path=MicroSteps}"
                         DisplayMemberPath="StepDescription"
                         SelectedValuePath="StepValue"
-                        SelectedItem="{Binding Path=SelectedStep}" />
+                        SelectedItem="{Binding Path=SelectedMicroStep}" />
             </GroupBox>
 
             <GroupBox Header="Direction"
@@ -205,7 +206,7 @@
               <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Border Background="Beige">
-              <TextBlock Text="Séquence"
+              <TextBlock Text="Sequence"
                          HorizontalAlignment="Center"
                          Margin="5" />
             </Border>
@@ -213,26 +214,95 @@
             <ScrollViewer Grid.Row="1"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto">
-              <ItemsControl ItemsSource="{Binding Path=Sequence}"
+              <ItemsControl ItemsSource="{Binding Path=Sequence, Mode=OneWay}"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Center"
-                            Margin="5"
-                            >
-                <DataTemplate>
-                  <StackPanel>
-                    <TextBlock Text="{Binding Path=Steps}" />
-                    <TextBlock Text=" / " />
-                    <TextBlock Text="{Binding Path=Direction}" />
-                    <TextBlock Text=" / " />
-                    <TextBlock Text="{Binding Path=Speed}" />
-                    <TextBlock Text=" / " />
-                    <TextBlock Text="{Binding Path=Iterations}" />
-                  </StackPanel>
-                </DataTemplate>
+                            Margin="5">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="local:MoveInfoVM">
+                    <Border BorderBrush="Black"
+                            BorderThickness="0,0,0,1">
+                      <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="auto" />
+                          <ColumnDefinition Width="auto" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Height="16"
+                                HorizontalAlignment="Center"
+                                ToolTip="Up"
+                                Command="{Binding DataContext.MovementUpCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding Path=Id}"
+                                VerticalAlignment="Center"
+                                BorderThickness="0"
+                                Background="White"
+                                Margin="0,0,1,0">
+                          <Image Source="{Binding Path=UpPicture}"
+                                 Height="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Height}" />
+                        </Button>
+
+                        <Button Grid.Column="1"
+                                Height="16"
+                                HorizontalAlignment="Center"
+                                ToolTip="Down"
+                                Command="{Binding DataContext.MovementDownCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding Path=Id}"
+                                VerticalAlignment="Center"
+                                BorderThickness="0"
+                                Background="White"
+                                Margin="0,0,5,0">
+                          <Image Source="{Binding Path=DownPicture}"
+                                 Height="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Height}" />
+                        </Button>
+
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Path=Id, StringFormat={}{0:00}}" />
+                          <TextBlock Text=" : " />
+                          <TextBlock Text="{Binding Path=Steps}" />
+                          <TextBlock Text=" / " />
+                          <TextBlock Text="{Binding Path=Direction}" />
+                          <TextBlock Text=" / " />
+                          <TextBlock Text="{Binding Path=Speed}" />
+                          <TextBlock Text=" / " />
+                          <TextBlock Text="{Binding Path=Iterations}" />
+                        </StackPanel>
+                        <Button Grid.Column="3"
+                                Width="12"
+                                Height="12"
+                                HorizontalAlignment="Right"
+                                ToolTip="Remove movement from sequence"
+                                Command="{Binding DataContext.RemoveMovementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding Path=Id}"
+                                VerticalAlignment="Center">
+                          <Button.Content>
+                            <Grid>
+                              <Rectangle Fill="Tomato" />
+                              <Line X1="0"
+                                    Y1="0"
+                                    X2="8"
+                                    Y2="8"
+                                    Stroke="White" />
+                              <Line X1="8"
+                                    Y1="0"
+                                    X2="0"
+                                    Y2="8"
+                                    Stroke="White" />
+                            </Grid>
+                          </Button.Content>
+                        </Button>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
               </ItemsControl>
             </ScrollViewer>
-            
+
 
             <Button Grid.Row="2"
                     Name="btnStart"
