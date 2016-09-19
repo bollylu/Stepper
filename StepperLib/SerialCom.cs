@@ -23,7 +23,7 @@ namespace StepperLib {
     #region Constructor(s)
     public SerialCom(string comName = "COM1") {
       ComPortName = comName;
-      ComPortSpeed = 9600;
+      ComPortSpeed = 250000;
       ComPortParity = Parity.None;
       ComPortDataBits = 8;
       ComPortStopBits = StopBits.One;
@@ -116,8 +116,6 @@ namespace StepperLib {
 
       try {
         ComPort.Write("C");
-        Thread.Sleep(250);
-        ComPort.Write("c");
       } catch (Exception ex) {
         Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
       }

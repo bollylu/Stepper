@@ -12,8 +12,8 @@ namespace StepperWpf {
   public class MainViewModel : MVVMBase {
 
     #region --- MicroSteps --------------------------------------------
-    public ObservableCollection<TStepDisplay> MicroSteps { get; protected set; } = new ObservableCollection<TStepDisplay>();
-    public TStepDisplay SelectedMicroStep {
+    public ObservableCollection<TComboBoxItem> MicroSteps { get; protected set; } = new ObservableCollection<TComboBoxItem>();
+    public TComboBoxItem SelectedMicroStep {
       get {
         return _SelectedMicroStep;
       }
@@ -23,8 +23,23 @@ namespace StepperWpf {
         NotifyPropertyChanged(nameof(IsMovementValid));
       }
     }
-    private TStepDisplay _SelectedMicroStep;
+    private TComboBoxItem _SelectedMicroStep;
     #endregion --- MicroSteps --------------------------------------------
+
+    #region --- Pas de vis --------------------------------------------
+    public ObservableCollection<TComboBoxItem> ThreadedShafts { get; protected set; } = new ObservableCollection<TComboBoxItem>();
+    public TComboBoxItem SelectedThreadedShaft {
+      get {
+        return _SelectedThreadedShaft;
+      }
+      set {
+        _SelectedThreadedShaft = value;
+        NotifyPropertyChanged(nameof(SelectedThreadedShaft));
+        NotifyPropertyChanged(nameof(IsMovementValid));
+      }
+    }
+    private TComboBoxItem _SelectedThreadedShaft;
+    #endregion --- Pas de vis --------------------------------------------
 
     #region --- Direction --------------------------------------------
     public EDirection Direction {
@@ -91,6 +106,12 @@ namespace StepperWpf {
     }
     private int _Speed;
 
+    private double _StepsForOneMm {
+      get {
+        return (double)SelectedMicroStep.Value / (double)SelectedThreadedShaft.Value;
+      }
+    }
+
     public int Iterations {
       get {
         return _Iterations;
@@ -102,6 +123,68 @@ namespace StepperWpf {
       }
     }
     private int _Iterations;
+
+    public bool rbMoveAsSteps {
+      get {
+        return _rbMoveAsSteps;
+      }
+      set {
+        _rbMoveAsSteps = value;
+        NotifyPropertyChanged(nameof(rbMoveAsSteps));
+      }
+    }
+    private bool _rbMoveAsSteps;
+
+    public bool rbMoveAsDistance {
+      get {
+        return _rbMoveAsDistance;
+      }
+      set {
+        _rbMoveAsDistance = value;
+        NotifyPropertyChanged(nameof(rbMoveAsDistance));
+      }
+    }
+    private bool _rbMoveAsDistance;
+
+    public int txtMoveAsSteps {
+      get {
+        return _txtMoveAsSteps;
+      }
+      set {
+        _txtMoveAsSteps = value;
+        NotifyPropertyChanged(nameof(txtMoveAsSteps));
+        _txtMoveAsDistance = Math.Round(_txtMoveAsSteps / _StepsForOneMm, 2);
+        NotifyPropertyChanged(nameof(txtMoveAsDistance));
+      }
+    }
+    private int _txtMoveAsSteps;
+
+    public double txtMoveAsDistance {
+      get {
+        return _txtMoveAsDistance;
+      }
+      set {
+        _txtMoveAsDistance = value;
+        NotifyPropertyChanged(nameof(txtMoveAsDistance));
+        _txtMoveAsSteps = (int)Math.Round(_StepsForOneMm * _txtMoveAsDistance, 0);
+        NotifyPropertyChanged(nameof(txtMoveAsSteps));
+
+      }
+    }
+    private double _txtMoveAsDistance;
+
+    public ObservableCollection<StepperDefinition> StepperDefinitions { get; protected set; } = new ObservableCollection<StepperDefinition>();
+    public StepperDefinition SelectedStepperDefinition {
+      get {
+        return _SelectedStepperDefinition;
+      }
+      set {
+        _SelectedStepperDefinition = value;
+        NotifyPropertyChanged(nameof(SelectedStepperDefinition));
+        NotifyPropertyChanged(nameof(IsMovementValid));
+      }
+    }
+    private StepperDefinition _SelectedStepperDefinition;
 
     public bool IsMovementValid {
       get {
@@ -140,6 +223,7 @@ namespace StepperWpf {
     public TRelayCommand<int> RemoveMovementCommand { get; private set; }
     public TRelayCommand<int> MovementUpCommand { get; private set; }
     public TRelayCommand<int> MovementDownCommand { get; private set; }
+    public TRelayCommand<string> ChangeStepperCommand { get; private set; }
 
     public MainViewModel() {
       _Initialize();
@@ -150,13 +234,22 @@ namespace StepperWpf {
       HelpContactCommand = new TRelayCommand(() => _HelpContactCommand(), _ => { return true; });
       HelpAboutCommand = new TRelayCommand(() => _HelpAboutCommand(), _ => { return true; });
       MicroSteps.Clear();
-      MicroSteps.Add(new TStepDisplay() { StepValue = 200, StepDescription = "200 (1)" });
-      MicroSteps.Add(new TStepDisplay() { StepValue = 400, StepDescription = "400 (1/2)" });
-      MicroSteps.Add(new TStepDisplay() { StepValue = 800, StepDescription = "800 (1/4)" });
-      MicroSteps.Add(new TStepDisplay() { StepValue = 1600, StepDescription = "1600 (1/8)" });
-      MicroSteps.Add(new TStepDisplay() { StepValue = 3200, StepDescription = "3200 (1/16)" });
-      MicroSteps.Add(new TStepDisplay() { StepValue = 6400, StepDescription = "6400 (1/32)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 200, Description = "200 (1)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 400, Description = "400 (1/2)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 800, Description = "800 (1/4)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 1600, Description = "1600 (1/8)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 3200, Description = "3200 (1/16)" });
+      MicroSteps.Add(new TComboBoxItem() { Value = 6400, Description = "6400 (1/32)" });
       SelectedMicroStep = MicroSteps.First();
+
+      ThreadedShafts.Clear();
+      ThreadedShafts.Add(new TComboBoxItem() { Value = 0.8f, Description = "M5 (0.80)" });
+      ThreadedShafts.Add(new TComboBoxItem() { Value = 1, Description = "M6 (1.00)" });
+      ThreadedShafts.Add(new TComboBoxItem() { Value = 1.25f, Description = "M8 (1.25)" });
+      ThreadedShafts.Add(new TComboBoxItem() { Value = 1.5f, Description = "M10 (1.50)" });
+      ThreadedShafts.Add(new TComboBoxItem() { Value = 1.75f, Description = "M12 (1.75)" });
+      SelectedThreadedShaft = ThreadedShafts.FirstOrDefault(x => x.Value == 1.25f);
+
       ChangeDirectionCommand = new TRelayCommand(() => _ChangeDirectionCommand(), _ => { return true; });
       AddToListCommand = new TRelayCommand(() => _AddToListCommand(), _ => { return IsMovementValid; });
       RemoveMovementCommand = new TRelayCommand<int>((x) => _RemoveMovementCommand(x), _ => { return Sequence.Count > 0; });
@@ -165,6 +258,14 @@ namespace StepperWpf {
       Speed = 50;
       Iterations = 1;
       Sequence.Clear();
+
+      rbMoveAsSteps = false;
+      rbMoveAsDistance = true;
+
+      StepperDefinitions.Clear();
+      StepperDefinitions.Add(new StepperDefinition("Nema 17", 1, 1407));
+      StepperDefinitions.Add(new StepperDefinition("Nema 23", 1, 1340));
+      ChangeStepperCommand = new TRelayCommand<string>((x) => _ChangeStepperCommand(x), _ => { return StepperDefinitions.Count > 1; });
     }
 
 
@@ -180,7 +281,7 @@ namespace StepperWpf {
       if (!IsMovementValid) {
         return;
       }
-      MoveInfoVM NewMoveInfo = new MoveInfoVM(new MoveInfo(Direction, SelectedMicroStep.StepValue, Speed, Speed, Iterations));
+      MoveInfoVM NewMoveInfo = new MoveInfoVM(new MoveInfo(Direction, (int)SelectedMicroStep.Value, Speed, Speed, Iterations));
       int LastId = Sequence.Count == 0 ? 0 : Sequence.OrderBy(x => x.Id).Last().Id;
       NewMoveInfo.Id = LastId + 1;
       Sequence.Add(NewMoveInfo);
@@ -208,8 +309,14 @@ namespace StepperWpf {
         return;
       }
       Sequence[id - 1].Id = Sequence[id].Id;
-      Sequence[id].Id = Sequence[id].Id -1;
+      Sequence[id].Id = Sequence[id].Id - 1;
       NotifyPropertyChanged(nameof(Sequence));
+    }
+
+    private void _ChangeStepperCommand(string name) {
+      if (name == "") {
+        return;
+      }
     }
 
     private void _FileOpenCommand() { }

@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace StepperWpf {
-  public class TStepDisplay {
-    public int StepValue { get; set; }
-    public string StepDescription { get; set; }
-    
+  public class TComboBoxItem {
+    public float Value { get; set; }
+    public string Description { get; set; }
   }
 }

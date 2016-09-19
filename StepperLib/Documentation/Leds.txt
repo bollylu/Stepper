@@ -1,0 +1,3 @@
+﻿Led jaune = clock
+Led verte = Enable / disable
+Led rouge = Direction (CW = allumé, CCW = éteint)

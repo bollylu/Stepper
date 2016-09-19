@@ -26,10 +26,10 @@ namespace StepperConsole {
     }
 
     public static void Test() {
-      Stepper CurrentStepper = new Stepper("COM3");
+      Stepper CurrentStepper = new Stepper("COM4");
 
       MoveInfoCollection MySequence = new MoveInfoCollection();
-      MySequence.AddItem(new MoveInfo(EDirection.CounterClockwise, 5, 100));
+      //MySequence.AddItem(new MoveInfo(EDirection.CounterClockwise, 5, 100));
       MySequence.AddItem(new MoveInfo(EDirection.Clockwise, 5, 100));
 
       Task.Run(() => CurrentStepper.Execute(MySequence)).Wait();

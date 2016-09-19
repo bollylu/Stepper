@@ -15,6 +15,13 @@
       <BooleanToVisibilityConverter x:Key="BtoV" />
       <local:MainViewModel x:Key="FakeViewModel" />
       <local:MoveInfoVM x:Key="FakeMoveInfo" />
+
+      <DataTemplate x:Key="StepperTemplate">
+        <MenuItem Header="{Binding Path=Name}"
+                  Command="{Binding Path=ChangeStepperCommand, RelativeSource={RelativeSource AncestorType=local:MainViewModel}}"
+                  CommandParameter="{Binding Path=Name}"/>
+      </DataTemplate>
+      
     </Grid.Resources>
 
     <Grid d:DataContext="{Binding Source={StaticResource FakeViewModel}}">
@@ -44,6 +51,13 @@
         </MenuItem>
         <MenuItem Header="Tools"
                   Name="mnuTools">
+          <MenuItem Name="mnuToolsStepper"
+                    Header="Stepper"
+                    ItemsSource="{Binding Path=StepperDefinitions}"
+                    ItemTemplate="{StaticResource StepperTemplate}"
+                    >
+            
+          </MenuItem>
           <MenuItem Name="mnuToolsOptions"
                     Header="Options">
           </MenuItem>
@@ -72,125 +86,205 @@
             <Grid.RowDefinitions>
               <RowDefinition Height="auto" />
               <RowDefinition Height="auto" />
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="*" />
-              <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
-
-            <Border Background="Beige"
-                    Grid.Row="0">
-              <TextBlock Text="Movement"
-                         HorizontalAlignment="Center"
-                         Margin="5" />
-            </Border>
-
-            <GroupBox Header="Steps"
-                      Grid.Row="1"
-                      Margin="5"
-                      ToolTip="Number of steps to execute">
-              <ComboBox Margin="10"
-                        VerticalAlignment="Center"
-                        IsEditable="True"
-                        ItemsSource="{Binding Path=MicroSteps}"
-                        DisplayMemberPath="StepDescription"
-                        SelectedValuePath="StepValue"
-                        SelectedItem="{Binding Path=SelectedMicroStep}" />
-            </GroupBox>
-
-            <GroupBox Header="Direction"
-                      Grid.Row="2"
-                      Margin="5"
-                      ToolTip="Direction for the movement">
-              <StackPanel>
-                <StackPanel Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
-                  <Button Name="btnDirectionCW"
-                          Margin="10"
-                          Command="{Binding Path=ChangeDirectionCommand}"
-                          Height="48"
-                          BorderThickness="0"
-                          Background="White">
-                    <Image Source="{Binding Path=DisplayClockwisePicture}"
-                           Height="{Binding ElementName=btnDirectionCW, Path=Height}"
-                           VerticalAlignment="Center"
+            <Grid Grid.Row="0">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Border Background="Aquamarine"
+                      Grid.Row="0">
+                <TextBlock Text="Transmission"
                            HorizontalAlignment="Center"
-                           SnapsToDevicePixels="True" />
-                  </Button>
-                  <TextBlock Text="CW"
-                             Margin="5,0,0,0"
-                             VerticalAlignment="Center" />
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
-                  <Button Name="btnDirectionCCW"
-                          Margin="10"
-                          Command="{Binding Path=ChangeDirectionCommand}"
-                          Height="48"
-                          BorderThickness="0"
-                          Background="White">
-                    <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
-                           Height="{Binding ElementName=btnDirectionCCW, Path=Height}"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           SnapsToDevicePixels="True" />
-                  </Button>
-                  <TextBlock Text="CCW"
-                             Margin="5,0,0,0"
-                             VerticalAlignment="Center" />
-                </StackPanel>
-              </StackPanel>
-            </GroupBox>
-
-            <GroupBox Header="Speed"
-                      Grid.Row="3"
-                      Margin="5">
-              <StackPanel Grid.Row="3"
-                          Orientation="Vertical"
+                           Margin="5" />
+              </Border>
+              <GroupBox Header="Steps"
+                        Grid.Row="1"
+                        Margin="5"
+                        ToolTip="Number of steps to execute for a complete turnover">
+                <ComboBox Margin="10"
                           VerticalAlignment="Center"
-                          HorizontalAlignment="Stretch"
-                          ToolTip="Speed at which the steps are sent (steps/second)">
-                <TextBlock Name="txtSpeed"
-                           Text="{Binding ElementName=SldSpeed,Path=Value}"
-                           HorizontalAlignment="Center" />
-                <Slider Name="SldSpeed"
-                        Minimum="0"
-                        Maximum="100"
-                        SmallChange="1"
-                        LargeChange="10"
-                        Margin="10"
-                        Value="{Binding Path=Speed}" />
+                          IsEditable="True"
+                          ItemsSource="{Binding Path=MicroSteps}"
+                          DisplayMemberPath="Description"
+                          SelectedValuePath="Value"
+                          SelectedItem="{Binding Path=SelectedMicroStep}" />
+              </GroupBox>
+              <GroupBox Header="Tige / Pas de vis"
+                        Grid.Row="2"
+                        Margin="5"
+                        ToolTip="Réglage pas de vis">
+                <ComboBox Margin="10"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Path=ThreadedShafts}"
+                          DisplayMemberPath="Description"
+                          SelectedValuePath="Value"
+                          SelectedItem="{Binding Path=SelectedThreadedShaft}" />
+              </GroupBox>
 
-              </StackPanel>
-            </GroupBox>
+            </Grid>
 
-            <GroupBox Header="Repeat"
-                      Grid.Row="4"
-                      Margin="5"
-                      ToolTip="Number of times to repeat the movement">
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBox Name="txtRepeat"
-                         Text="{Binding Path=Iterations}"
-                         HorizontalContentAlignment="Center"
-                         BorderThickness="0"
-                         Margin="5" />
-              </Grid>
-            </GroupBox>
+            <Grid Grid.Row="1">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+              </Grid.RowDefinitions>
+              <Border Background="Chartreuse"
+                      Grid.Row="0">
+                <TextBlock Text="Movement"
+                           HorizontalAlignment="Center"
+                           Margin="5" />
+              </Border>
 
-            <Button Name="btnAddToList"
-                    Grid.Row="6"
-                    Margin="10"
-                    IsEnabled="{Binding Path=IsMovementValid}"
-                    ToolTip="Add the movement to the end of sequence"
-                    Command="{Binding Path=AddToListCommand}">Add To list</Button>
+              <!--<GroupBox Header="Steps"
+                        Grid.Row="1"
+                        Margin="5"
+                        ToolTip="Number of steps to execute">
+                <ComboBox Margin="10"
+                          VerticalAlignment="Center"
+                          IsEditable="True"
+                          ItemsSource="{Binding Path=MicroSteps}"
+                          DisplayMemberPath="Description"
+                          SelectedValuePath="Value"
+                          SelectedItem="{Binding Path=SelectedMicroStep}" />
+              </GroupBox>-->
 
+              <GroupBox Header="Direction"
+                        Grid.Row="2"
+                        Margin="5"
+                        ToolTip="Direction for the movement">
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal"
+                              VerticalAlignment="Center"
+                              Visibility="{Binding Path=DisplayClockwise, Converter={StaticResource BtoV}}">
+                    <Button Name="btnDirectionCW"
+                            Margin="10"
+                            Command="{Binding Path=ChangeDirectionCommand}"
+                            Height="48"
+                            BorderThickness="0"
+                            Background="White">
+                      <Image Source="{Binding Path=DisplayClockwisePicture}"
+                             Height="{Binding ElementName=btnDirectionCW, Path=Height}"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             SnapsToDevicePixels="True" />
+                    </Button>
+                    <TextBlock Text="CW"
+                               Margin="5,0,0,0"
+                               VerticalAlignment="Center" />
+                  </StackPanel>
+
+                  <StackPanel Orientation="Horizontal"
+                              VerticalAlignment="Center"
+                              Visibility="{Binding Path=DisplayCounterClockwise, Converter={StaticResource BtoV}}">
+                    <Button Name="btnDirectionCCW"
+                            Margin="10"
+                            Command="{Binding Path=ChangeDirectionCommand}"
+                            Height="48"
+                            BorderThickness="0"
+                            Background="White">
+                      <Image Source="{Binding Path=DisplayCounterClockwisePicture}"
+                             Height="{Binding ElementName=btnDirectionCCW, Path=Height}"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             SnapsToDevicePixels="True" />
+                    </Button>
+                    <TextBlock Text="CCW"
+                               Margin="5,0,0,0"
+                               VerticalAlignment="Center" />
+                  </StackPanel>
+                </StackPanel>
+              </GroupBox>
+
+              <GroupBox Header="Speed"
+                        Grid.Row="3"
+                        Margin="5">
+                <StackPanel Grid.Row="3"
+                            Orientation="Vertical"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            ToolTip="Speed at which the steps are sent (steps/second)">
+                  <TextBlock Name="txtSpeed"
+                             Text="{Binding ElementName=SldSpeed,Path=Value}"
+                             HorizontalAlignment="Center" />
+                  <Slider Name="SldSpeed"
+                          Minimum="0"
+                          Maximum="100"
+                          SmallChange="1"
+                          LargeChange="10"
+                          Margin="10"
+                          Value="{Binding Path=Speed}" />
+
+                </StackPanel>
+              </GroupBox>
+
+              <GroupBox Header="Displacement"
+                        Grid.Row="4"
+                        Margin="5"
+                        ToolTip="Distance or number of steps">
+                <StackPanel>
+
+                  <Grid Margin="5,10,5,5">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="100" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Name="rbMoveAsStepsUI"
+                                 Grid.Column="0"
+                                 IsChecked="{Binding Path=rbMoveAsSteps}"
+                                 Content="Steps"
+                                 GroupName="Displacement" />
+                    <TextBox Grid.Column="1"
+                             Text="{Binding Path=txtMoveAsSteps}"
+                             IsEnabled="{Binding ElementName=rbMoveAsStepsUI,Path=IsChecked}"
+                             ToolTip="Please enter the number of steps"/>
+                  </Grid>
+                  <Grid Margin="5 ">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="100" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Name="rbMoveAsDistanceUI"
+                                 Grid.Column="0"
+                                 IsChecked="{Binding Path=rbMoveAsDistance}"
+                                 Content="Distance (mm)"
+                                 GroupName="Displacement" />
+                    <TextBox Grid.Column="1"
+                             Text="{Binding Path=txtMoveAsDistance, StringFormat={}{0:0.00}}"
+                             IsEnabled="{Binding ElementName=rbMoveAsDistanceUI,Path=IsChecked}"
+                             ToolTip="Please enter the distance in mm"/>
+                  </Grid>
+                </StackPanel>
+
+                <!--<Grid>
+                  
+                  
+                  
+                  
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Name="txtRepeat"
+                           Text="{Binding Path=Iterations}"
+                           HorizontalContentAlignment="Center"
+                           BorderThickness="0"
+                           Margin="5" />
+                </Grid>-->
+              </GroupBox>
+
+              <Button Name="btnAddToList"
+                      Grid.Row="6"
+                      Margin="10"
+                      IsEnabled="{Binding Path=IsMovementValid}"
+                      ToolTip="Add the movement to the end of sequence"
+                      Command="{Binding Path=AddToListCommand}">Add To list</Button>
+            </Grid>
           </Grid>
 
 

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+
+  <Steppers>
+    <Stepper Name="Nema 17" MinRpm="10" MaxRpm="1407"/>
+  </Steppers>
+  
+</root>

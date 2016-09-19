@@ -67,8 +67,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="StepperDefinition.cs" />
     <Compile Include="TRelayCommand.cs" />
-    <Compile Include="TStepDisplay.cs" />
+    <Compile Include="TComboBoxItem.cs" />
     <Compile Include="VM\MoveInfoVM.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +130,9 @@
   <ItemGroup>
     <Resource Include="Pictures\down.png" />
     <Resource Include="Pictures\up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="config.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
