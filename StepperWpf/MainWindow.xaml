@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:StepperWpf"
         mc:Ignorable="d"
         Title="Stepper"
-        Height="600"
+        Height="700"
         Width="800"
         Initialized="Window_Initialized">
   <Grid>
@@ -16,12 +16,8 @@
       <local:MainViewModel x:Key="FakeViewModel" />
       <local:MoveInfoVM x:Key="FakeMoveInfo" />
 
-      <DataTemplate x:Key="StepperTemplate">
-        <MenuItem Header="{Binding Path=Name}"
-                  Command="{Binding Path=ChangeStepperCommand, RelativeSource={RelativeSource AncestorType=local:MainViewModel}}"
-                  CommandParameter="{Binding Path=Name}"/>
-      </DataTemplate>
-      
+
+
     </Grid.Resources>
 
     <Grid d:DataContext="{Binding Source={StaticResource FakeViewModel}}">
@@ -52,12 +48,16 @@
         <MenuItem Header="Tools"
                   Name="mnuTools">
           <MenuItem Name="mnuToolsStepper"
-                    Header="Stepper"
-                    ItemsSource="{Binding Path=StepperDefinitions}"
-                    ItemTemplate="{StaticResource StepperTemplate}"
-                    >
-            
+                    Header="Stepper">
+            <MenuItem Header="Nema 17"
+                      Command="{Binding Path=ChangeStepperCommand}"
+                      CommandParameter="Nema 17" />
+            <MenuItem Header="Nema 23"
+                      Command="{Binding Path=ChangeStepperCommand}"
+                      CommandParameter="Nema 23" />
           </MenuItem>
+          
+
           <MenuItem Name="mnuToolsOptions"
                     Header="Options">
           </MenuItem>
@@ -86,9 +86,11 @@
             <Grid.RowDefinitions>
               <RowDefinition Height="auto" />
               <RowDefinition Height="auto" />
+              
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
               <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
@@ -99,8 +101,16 @@
                            HorizontalAlignment="Center"
                            Margin="5" />
               </Border>
-              <GroupBox Header="Steps"
+              <GroupBox Header="Selected stepper definition"
                         Grid.Row="1"
+                        Margin="5"
+                        >
+                <TextBlock Margin="10"
+                          VerticalAlignment="Center"
+                          Text="{Binding Path=SelectedStepperDefinition.Name, TargetNullValue='Please select a stepper'}" />
+              </GroupBox>
+              <GroupBox Header="Steps"
+                        Grid.Row="2"
                         Margin="5"
                         ToolTip="Number of steps to execute for a complete turnover">
                 <ComboBox Margin="10"
@@ -112,7 +122,7 @@
                           SelectedItem="{Binding Path=SelectedMicroStep}" />
               </GroupBox>
               <GroupBox Header="Tige / Pas de vis"
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Margin="5"
                         ToolTip="Réglage pas de vis">
                 <ComboBox Margin="10"
@@ -243,7 +253,7 @@
                     <TextBox Grid.Column="1"
                              Text="{Binding Path=txtMoveAsSteps}"
                              IsEnabled="{Binding ElementName=rbMoveAsStepsUI,Path=IsChecked}"
-                             ToolTip="Please enter the number of steps"/>
+                             ToolTip="Please enter the number of steps" />
                   </Grid>
                   <Grid Margin="5 ">
                     <Grid.ColumnDefinitions>
@@ -258,7 +268,7 @@
                     <TextBox Grid.Column="1"
                              Text="{Binding Path=txtMoveAsDistance, StringFormat={}{0:0.00}}"
                              IsEnabled="{Binding ElementName=rbMoveAsDistanceUI,Path=IsChecked}"
-                             ToolTip="Please enter the distance in mm"/>
+                             ToolTip="Please enter the distance in mm" />
                   </Grid>
                 </StackPanel>
 

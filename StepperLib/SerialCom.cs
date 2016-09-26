@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 namespace StepperLib {
   public class SerialCom {
 
+    public static bool IsDebug = false;
+
     #region Public properties
     public SerialPort ComPort { get; private set; }
     public string ComPortName { get; set; }
@@ -23,7 +25,7 @@ namespace StepperLib {
     #region Constructor(s)
     public SerialCom(string comName = "COM1") {
       ComPortName = comName;
-      ComPortSpeed = 250000;
+      ComPortSpeed = 115200;
       ComPortParity = Parity.None;
       ComPortDataBits = 8;
       ComPortStopBits = StopBits.One;
@@ -31,25 +33,25 @@ namespace StepperLib {
     #endregion Constructor(s)
 
     public void Open() {
-      Trace.WriteLine($"Opening com port {ComPortName} ...");
+      Trace.WriteLineIf(IsDebug, $"Opening com port {ComPortName} ...");
       if (ComPort == null) {
         ComPort = new SerialPort(ComPortName, ComPortSpeed, ComPortParity, ComPortDataBits, ComPortStopBits);
       }
       if (ComPort.IsOpen) {
-        Trace.WriteLine($"Com port {ComPortName} is already opened");
+        Trace.WriteLineIf(IsDebug, $"Com port {ComPortName} is already opened");
         Close();
         return;
       }
       try {
         ComPort.Open();
       } catch (Exception ex) {
-        Trace.WriteLine($"Unable to open com port {ComPortName} : {ex.Message}");
+        Trace.WriteLineIf(IsDebug, $"Unable to open com port {ComPortName} : {ex.Message}");
         return;
       }
     }
 
     public void Close() {
-      Trace.WriteLine("Closing com port...");
+      Trace.WriteLineIf(IsDebug, "Closing com port...");
       if (ComPort.IsOpen) {
         ComPort.BaseStream.Flush();
         ComPort.Close();
@@ -61,16 +63,16 @@ namespace StepperLib {
 
     public void SetDirection(EDirection direction) {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "Com port is not opened", Severity.Error);
         return;
       }
 
       try {
-        Trace.WriteLine($"Set direction to {direction.ToString()}");
+        Trace.WriteLineIf(IsDebug, $"Set direction to {direction.ToString()}");
         if (direction == EDirection.Clockwise) {
           ComPort.Write("D");
         } else {
@@ -83,34 +85,34 @@ namespace StepperLib {
 
     public void SetActive(bool isActive) {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "Com port is not opened", Severity.Error);
         return;
       }
 
       try {
         if (isActive) {
-          Trace.WriteLine("Enable ON");
+          Trace.WriteLineIf(IsDebug, "Enable ON");
           ComPort.Write("E");
         } else {
-          Trace.WriteLine("Enable OFF");
+          Trace.WriteLineIf(IsDebug, "Enable OFF");
           ComPort.Write("e");
         }
       } catch (Exception ex) {
-        Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
+        Trace.WriteLineIf(IsDebug, $"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
       }
     }
 
     public void SendStep() {
       if (ComPort == null) {
-        Trace.WriteLine("No associated com port", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "No associated com port", Severity.Error);
         return;
       }
       if (!ComPort.IsOpen) {
-        Trace.WriteLine("Com port is not opened", Severity.Error);
+        Trace.WriteLineIf(IsDebug, "Com port is not opened", Severity.Error);
         return;
       }
 
@@ -120,5 +122,10 @@ namespace StepperLib {
         Trace.WriteLine($"Unable to send step on com port {ComPortName} : {ex.Message}", Severity.Error);
       }
     }
+
+    public static IEnumerable<string> GetSerialPorts() {
+      return SerialPort.GetPortNames();
+    }
+
   }
 }

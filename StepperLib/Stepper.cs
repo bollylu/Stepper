@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 namespace StepperLib {
   public class Stepper {
 
+    public static bool IsDebug = false;
+
     public SerialCom StepperSerialCom { get; set; }
 
     public Stepper(string serialComPort) {
@@ -30,11 +32,13 @@ namespace StepperLib {
         for (int RepeatSteps = 1; RepeatSteps <= MoveInfoItem.Iterations; RepeatSteps++) {
           for (int i = 1; i <= MoveInfoItem.Steps; i++) {
 
-            Trace.WriteLine($"  Step {i}");
+            Trace.WriteLineIf(IsDebug, $"  Step {i}");
             StepperSerialCom.SendStep();
 
-            Trace.WriteLine($"  == Waiting for {MoveInfoItem.GapBetweenSteps}");
-            await Task.Delay(TimeSpan.FromMilliseconds(MoveInfoItem.GapBetweenSteps));
+            if (MoveInfoItem.GapBetweenSteps > 0) {
+              Trace.WriteLineIf(IsDebug, $"  == Waiting for {MoveInfoItem.GapBetweenSteps}");
+              await Task.Delay(TimeSpan.FromMilliseconds(MoveInfoItem.GapBetweenSteps));
+            }
 
           }
         }
@@ -59,11 +63,13 @@ namespace StepperLib {
       for (int RepeatSteps = 1; RepeatSteps <= moveInfo.Iterations; RepeatSteps++) {
         for (int i = 1; i <= moveInfo.Steps; i++) {
 
-          Trace.WriteLine($"  Step {i}");
+          Trace.WriteLineIf(IsDebug, $"  Step {i}");
           StepperSerialCom.SendStep();
 
-          Trace.WriteLine($"  == Waiting for {moveInfo.GapBetweenSteps}");
-          await Task.Delay(TimeSpan.FromMilliseconds(moveInfo.GapBetweenSteps));
+          if (moveInfo.GapBetweenSteps > 0) {
+            Trace.WriteLineIf(IsDebug, $"  == Waiting for {moveInfo.GapBetweenSteps}");
+            await Task.Delay(TimeSpan.FromMilliseconds(moveInfo.GapBetweenSteps));
+          }
 
         }
       }

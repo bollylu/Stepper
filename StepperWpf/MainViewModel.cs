@@ -263,9 +263,9 @@ namespace StepperWpf {
       rbMoveAsDistance = true;
 
       StepperDefinitions.Clear();
-      StepperDefinitions.Add(new StepperDefinition("Nema 17", 1, 1407));
-      StepperDefinitions.Add(new StepperDefinition("Nema 23", 1, 1340));
-      ChangeStepperCommand = new TRelayCommand<string>((x) => _ChangeStepperCommand(x), _ => { return StepperDefinitions.Count > 1; });
+      StepperDefinitions.Add(new StepperDefinition("Nema 17", 1, 1407) { ChangeCommand = ChangeStepperCommand });
+      StepperDefinitions.Add(new StepperDefinition("Nema 23", 1, 1340) { ChangeCommand = ChangeStepperCommand });
+      ChangeStepperCommand = new TRelayCommand<string>((x) => _ChangeStepperCommand(x), _ => { return true; });
     }
 
 
@@ -313,10 +313,14 @@ namespace StepperWpf {
       NotifyPropertyChanged(nameof(Sequence));
     }
 
-    private void _ChangeStepperCommand(string name) {
-      if (name == "") {
+    private void _ChangeStepperCommand(string stepperDefinitionName) {
+      if (stepperDefinitionName == null) {
         return;
       }
+      if (StepperDefinitions==null ||StepperDefinitions.Count==0) {
+        return;
+      }
+      SelectedStepperDefinition = StepperDefinitions.FirstOrDefault(x => x.Name == stepperDefinitionName);
     }
 
     private void _FileOpenCommand() { }
