@@ -281,7 +281,7 @@ namespace StepperWpf {
       if (!IsMovementValid) {
         return;
       }
-      MoveInfoVM NewMoveInfo = new MoveInfoVM(new MoveInfo(Direction, (int)SelectedMicroStep.Value, Speed, Speed, Iterations));
+      MoveInfoVM NewMoveInfo = new MoveInfoVM(new MoveInfo(Direction, (int)SelectedMicroStep.Value, Speed, Iterations));
       int LastId = Sequence.Count == 0 ? 0 : Sequence.OrderBy(x => x.Id).Last().Id;
       NewMoveInfo.Id = LastId + 1;
       Sequence.Add(NewMoveInfo);

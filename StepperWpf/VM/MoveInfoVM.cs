@@ -50,17 +50,17 @@ namespace StepperWpf {
       }
     }
 
-    public int StepDuration {
-      get {
-        return _Data.StepDuration;
-      }
-      set {
-        _Data.StepDuration = value;
-        NotifyPropertyChanged(nameof(StepDuration));
-      }
-    }
+    //public int StepDuration {
+    //  get {
+    //    return _Data.StepDuration;
+    //  }
+    //  set {
+    //    _Data.StepDuration = value;
+    //    NotifyPropertyChanged(nameof(StepDuration));
+    //  }
+    //}
 
-    public int GapBetweenSteps {
+    public double GapBetweenSteps {
       get {
         return _Data.GapBetweenSteps;
       }
@@ -70,11 +70,11 @@ namespace StepperWpf {
       }
     }
 
-    public float Speed {
-      get {
-        return 1000f / (StepDuration + GapBetweenSteps);
-      }
-    }
+    //public float Speed {
+    //  get {
+    //    return 1000f / (StepDuration + GapBetweenSteps);
+    //  }
+    //}
     
     public int Id {
       get {
@@ -98,7 +98,7 @@ namespace StepperWpf {
     }
 
     public MoveInfoVM() : base() {
-      _Data = new MoveInfo(EDirection.Clockwise, 200, 100, 50, 1);
+      _Data = new MoveInfo(EDirection.Clockwise, 200, 100, 1);
     }
 
     public MoveInfoVM(MoveInfo moveInfo) : base() {
